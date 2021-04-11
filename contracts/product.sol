@@ -34,27 +34,27 @@ contract Products
     }
 
     
-    function AddProduct() public OwnerReq returns (bool)
+    function AddProduct() public OwnerReq returns (bool) //David
     {
         return true;
     }
     
-    function RemoveProduct() public OwnerReq returns (bool) 
+    function RemoveProduct() public OwnerReq returns (bool) //Madalina
     {
         return true;
     }
     
-    function UpdateProduct() public OwnerReq returns (bool) 
+    function UpdateProduct() public OwnerReq returns (bool) //David
     {
         return true;
     }
     
-    function SearchProduct() public view returns (string memory,string memory,string memory,string memory) 
+    function SearchProduct() public view returns (string memory,string memory,string memory,string memory) //Sorina
     {
         return (" "," "," "," ");
     }
     
-    function ReportProduct() public returns (bool) 
+    function ReportProduct() public returns (bool) //Sorina
     {
         return true;
     }
