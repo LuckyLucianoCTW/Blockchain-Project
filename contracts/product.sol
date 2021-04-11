@@ -49,13 +49,45 @@ contract Products
         return true;
     }
     
-    function SearchProduct() public view returns (string memory,string memory,string memory,string memory) //Sorina
-    {
-        return (" "," "," "," ");
+    function ReturnProduct(uint _index) internal view returns (string memory, string memory, string memory) {
+        return (OProducts[_index].name, OProducts[_index].brand, OProducts[_index].country);
     }
     
-    function ReportProduct() public returns (bool) //Sorina
+    function SearchProduct(string memory _name, string memory _brand, string memory _country, string memory _unique_hash) public view returns (bool) //Sorina
     {
+        int found = 0;
+        // pentru ce nu vrem sa introducem in parametri vom pune ""
+        
+        for (uint i = 0; i < IndexCountProduct - 1; i++) {
+            if (_name == "") or (_name == OProducts[i].name) {
+                if (_brand == "") or (_brand == OProducts[i].brand) {
+                    if (_country == "") or (_country == OProducts[i].country) {
+                        if (_unique_hash == "") or (_unique_hash == OProducts[i].unique_hash) {
+                            ReturnProduct(i);
+                            found = 1;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (found == 0) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    function ReportProduct(string memory _unique_hash) public returns (bool) //Sorina
+    {
+        for (uint i = 0; i < IndexCountProduct - 1; i++) {
+            if (_unique_hash == OProducts[i].unique_hash) {
+                return false;
+            }
+        }
+        
+        ReportedHashProducts.push(_unique_hash);
+        IndexCountHash ++;
         return true;
     }
 }
