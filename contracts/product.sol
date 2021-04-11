@@ -90,6 +90,12 @@ contract Products
             }
         }
         
+        for (uint i = 0; i < ReportedHashProducts.length - 1; i++) {
+            if (CompareStrings(_unique_hash, ReportedHashProducts[i])) {
+                return false;
+            }
+        }
+        
         ReportedHashProducts.push(_unique_hash);
         IndexCountHash ++;
         return true;
