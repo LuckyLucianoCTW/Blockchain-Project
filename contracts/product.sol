@@ -1,7 +1,6 @@
 pragma solidity ^0.5.0;
 /*
 In contractul pe care-l vom face vom avea urmatoarele elemente : 
-
 1) Structuri pentru produse
 2) Functii de : adaugare, stergere, update, cautare, report.
 */
@@ -39,9 +38,58 @@ contract Products
         return true;
     }
     
-    function RemoveProduct() public OwnerReq returns (bool) //Madalina
+    function RemoveProduct(string memory _unique_hash) public OwnerReq returns (bool) //Madalina
     {
-        return true;
+        uint indexRemove = 0;
+        bool inArray = false;
+        
+        //cauta produsul in OProducts
+        for (uint i = 0; i < OProducts.length; i++) {
+            if (CompareStrings(_unique_hash, OProducts[i].unique_hash)) {
+                indexRemove = i;
+                inArray = true;
+            }
+        }
+        
+        if (inArray == true) { 
+            for (uint j = indexRemove; j < OProducts.length - 1; j++) {
+                OProducts[j] = OProducts[j + 1];
+            }
+            
+            delete OProducts[OProducts.length - 1];
+            OProducts.length--;
+            IndexCountProduct--;
+            return true;
+        }
+        
+        return false;
+    }
+    function RemoveReportedProduct(string memory _unique_hash) public OwnerReq returns (bool) //Madalina
+    {
+        uint indexRemove = 0;
+        bool inArray = false;
+        
+        //cauta produsul in ReportedHashProducts
+        for (uint i = 0; i < ReportedHashProducts.length; i++) {
+            if (CompareStrings(_unique_hash, ReportedHashProducts[i])) {
+                indexRemove = i;
+                inArray = true;
+            }
+        }
+        
+        if (inArray == true) { 
+            for (uint j = indexRemove; j < ReportedHashProducts.length - 1; j++) {
+                ReportedHashProducts[j] = ReportedHashProducts[j + 1];
+            }
+            
+            delete ReportedHashProducts[ReportedHashProducts.length - 1];
+            ReportedHashProducts.length--;
+            IndexCountHash--;
+            return true;
+        }
+        
+        return false;
+      
     }
     
     function UpdateProduct() public OwnerReq returns (bool) //David
