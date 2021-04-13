@@ -33,8 +33,23 @@ contract Products
     }
 
     
-    function AddProduct() public OwnerReq returns (bool) //David
+    function AddProduct(string memory _name, string memory _brand, string memory _country, string memory _unique_hash) public OwnerReq returns (bool) //David
     {
+        
+        if(CompareStrings(_name, " ") || CompareStrings(_brand, " ") || CompareStrings(_country, " ") || CompareStrings(_unique_hash, " "))
+            return false;
+            
+            
+        for (uint i = 0; i < OProducts.length; i++)
+        {
+           if(CompareStrings(_name, OProducts[i].name) || CompareStrings(_brand, OProducts[i].brand) || CompareStrings(_country, OProducts[i].country) || CompareStrings(_unique_hash, OProducts[i].unique_hash))
+                return false;  //the product already exists shall we update it ? mhmm we'll see
+        }
+        
+        Product memory nProduct = Product(_name,_brand,_country,_unique_hash);    
+        OProducts.push(nProduct);
+        
+        
         return true;
     }
     
@@ -92,9 +107,27 @@ contract Products
       
     }
     
-    function UpdateProduct() public OwnerReq returns (bool) //David
+    function UpdateProduct(string memory old_unique_hash, string memory new_name, string memory new_brand, string memory new_country, string memory new_unique_hash) public OwnerReq returns (bool) //David
     {
-        return true;
+        
+        for (uint i = 0; i < OProducts.length; i++)
+        {
+            if(CompareStrings(old_unique_hash,OProducts[i].unique_hash))
+            {
+                
+            if(!CompareStrings(new_name, " "))
+                OProducts[i].name = new_name;
+            if(!CompareStrings(new_brand, " "))
+                OProducts[i].brand = new_brand;    
+            if(!CompareStrings(new_country, " "))
+                OProducts[i].country = new_country;
+            if(!CompareStrings(new_unique_hash, " "))
+                OProducts[i].unique_hash = new_unique_hash;  
+                
+            return true;
+            }
+        }
+       return false;
     }
     
     function CompareStrings(string memory _s1, string memory _s2) internal view returns(bool) {
