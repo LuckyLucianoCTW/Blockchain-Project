@@ -4,6 +4,11 @@ pragma experimental ABIEncoderV2;
 In contractul pe care-l vom face vom avea urmatoarele elemente : 
 1) Structuri pentru produse
 2) Functii de : adaugare, stergere, update, cautare, report.
+
+3) 15/04/2021 Functions :
+-BuyProduct //Sorina 
+-RefundProduct //Madalina 
+-OnSaleProduct //David
 */
 
 contract Products
@@ -15,9 +20,11 @@ contract Products
         string brand;
         string country;
         string unique_hash;
+        string price;
+        string buyer_hash;
     } 
-    Product [] OProducts;
-     
+    Product [] Logs;
+    Product [] OProducts; 
     string [] ReportedHashProducts;
     
     modifier OwnerReq() {
@@ -30,7 +37,10 @@ contract Products
         
         owner = msg.sender;
     }
-
+    
+    
+    
+    
     /*
     Input Populare : 
     "Retro 1", "Jordan","Somalia", "432539134"
@@ -38,12 +48,13 @@ contract Products
     "Retro", "Jordan","Somalia", "432569134"
     "Kanye 2", "Yeezy","Somalia", "41239134"
     */
+    
+    
     function AddProduct(string memory _name, string memory _brand, string memory _country, string memory _unique_hash) public OwnerReq returns (bool) //David
     {
         
         if(CompareStrings(_name, "") || CompareStrings(_brand, "") || CompareStrings(_country, "") || CompareStrings(_unique_hash, ""))
             return false;
-            
             
         for (uint i = 0; i < OProducts.length; i++)
            if(CompareStrings(_unique_hash, OProducts[i].unique_hash))
@@ -144,8 +155,8 @@ contract Products
     
     function SearchProduct(string memory _name, string memory _brand, string memory _country, string memory _unique_hash) public view returns (bool, Product[] memory) //Sorina
     {
-        Product[] memory id = new Product[](OProducts.length); 
-        int found = 0;
+        Product[] memory id = new Product[](OProducts.length);  
+        bool finalState = false;
         // pentru ce nu vrem sa introducem in parametri vom pune "" 
         for (uint i = 0; i < OProducts.length; i++) {
             if (CompareStrings(_name, "") || CompareStrings( _name, OProducts[i].name)) {
@@ -155,18 +166,14 @@ contract Products
                             
                             Product storage aux = OProducts[i]; 
                             id[i] = aux; 
-                            found = 1;
+                            finalState = true;
                         }
                     }
                 }
             }
         }
         
-        if (found == 0) {
-            return (false,id);
-        }
-        
-        return (true,id);
+        return (finalState,id);
     }
     function ReportProduct(string memory _unique_hash) public returns (bool) //Sorina
     {
@@ -185,4 +192,5 @@ contract Products
         ReportedHashProducts.push(_unique_hash);
         return true;
     }
+    
 }
