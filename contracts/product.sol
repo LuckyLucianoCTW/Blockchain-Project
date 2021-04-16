@@ -20,7 +20,7 @@ contract Products
         string brand;
         string country;
         string unique_hash;
-        string price;
+        uint price;
         string buyer_hash;
     } 
     Product [] Logs;
@@ -43,24 +43,30 @@ contract Products
     
     /*
     Input Populare : 
-    "Retro 1", "Jordan","Somalia", "432539134"
-    "Retro 2", "Jordan","Somalia", "432539114"
-    "Retro", "Jordan","Somalia", "432569134"
-    "Kanye 2", "Yeezy","Somalia", "41239134"
+    "Retro 1", "Jordan","Somalia", "432539134",699
+    "Retro 2", "Jordan","Somalia", "432539114",519
+    "Retro", "Jordan","Somalia", "432569134", 555
+    "Kanye 2", "Yeezy","Somalia", "41239134",899
     */
     
-    
-    function AddProduct(string memory _name, string memory _brand, string memory _country, string memory _unique_hash) public OwnerReq returns (bool) //David
+    function OnSaleProduct(string memory search_hash, uint discount) public OwnerReq returns (bool)
+    {
+        for(uint i = 0 ; i < OProducts.length; i++)
+            if(CompareStrings(OProducts[i].unique_hash,search_hash))
+             return UpdateProduct(search_hash,"","","","", OProducts[i].price -  ((discount * OProducts[i].price) / 100),"");
+        return false;
+    }
+    function AddProduct(string memory _name, string memory _brand, string memory _country, string memory _unique_hash, uint price) public OwnerReq returns (bool) //David
     {
         
-        if(CompareStrings(_name, "") || CompareStrings(_brand, "") || CompareStrings(_country, "") || CompareStrings(_unique_hash, ""))
+        if(CompareStrings(_name, "") || CompareStrings(_brand, "") || CompareStrings(_country, "") || CompareStrings(_unique_hash, "") || price < 0)
             return false;
             
         for (uint i = 0; i < OProducts.length; i++)
            if(CompareStrings(_unique_hash, OProducts[i].unique_hash))
-                return UpdateProduct(OProducts[i].unique_hash,_name,_brand,_country,_unique_hash); // we update it
+                return UpdateProduct(OProducts[i].unique_hash,_name,_brand,_country,_unique_hash,price,""); // we update it
         
-        Product memory nProduct = Product(_name,_brand,_country,_unique_hash);    
+        Product memory nProduct = Product(_name,_brand,_country,_unique_hash,price,"");    
         OProducts.push(nProduct); 
         
         return true;
@@ -116,7 +122,7 @@ contract Products
       
     }
     
-    function UpdateProduct(string memory old_unique_hash, string memory new_name, string memory new_brand, string memory new_country, string memory new_unique_hash) public OwnerReq returns (bool) //David
+    function UpdateProduct(string memory old_unique_hash, string memory new_name, string memory new_brand, string memory new_country, string memory new_unique_hash,uint new_price, string memory new_buyerHash) public OwnerReq returns (bool) //David
     {
         
         for (uint i = 0; i < OProducts.length; i++)
@@ -131,6 +137,10 @@ contract Products
                 OProducts[i].country = new_country;
             if(!CompareStrings(new_unique_hash, ""))
                 OProducts[i].unique_hash = new_unique_hash;  
+            if(new_price != OProducts[i].price && new_price > 0)
+                OProducts[i].price = new_price;  
+            if(!CompareStrings(new_buyerHash, ""))
+                OProducts[i].buyer_hash = new_buyerHash;  
             return true;
             }
         }
