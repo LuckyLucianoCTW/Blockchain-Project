@@ -28,7 +28,7 @@ contract Products
     struct BoughtProduct
     {
         string unique_hash;
-        string buyer_hash;
+        address payable buyer_hash;
         string numberOrder;
     }
     
@@ -76,10 +76,55 @@ contract Products
            if(CompareStrings(_unique_hash, OProducts[i].unique_hash))
                 return UpdateProduct(OProducts[i].unique_hash,_name,_brand,_country,_unique_hash,price,""); // we update it
         
-        Product memory nProduct = Product(_name,_brand,_country,_unique_hash,price,"");    
-        OProducts.push(nProduct); 
+        // Product memory nProduct = Product(_name,_brand,_country,_unique_hash,price,"");    
+        // OProducts.push(nProduct); 
         
         return true;
+    }
+    function RefundProduct(string memory _numberOrder) public payable OwnerReq returns (bool) //Madalina
+    { 
+        uint indexProduct = 0;
+        uint indexBought = 0;
+        bool inArrayProducts = false;
+        bool inArrayBought = false;
+        
+        //cauta produsul in BoughtProducts
+        for (uint i = 0; i < BoughtProducts.length; i++) {
+            if (CompareStrings(_numberOrder, BoughtProducts[i].numberOrder))
+            {
+                indexBought = i;
+                inArrayBought = true;
+            }
+        }
+        
+        //cauta produsul in OProducts
+        for (uint i = 0; i < OProducts.length; i++) {
+            if (CompareStrings(BoughtProducts[indexBought].unique_hash, OProducts[i].unique_hash)) {
+                indexProduct = i;
+                inArrayBought = true;
+            }
+        }
+        
+        //daca se afla in produsele spre vanzare si in lista cu produsele vandute 
+        if (inArrayProducts == true && inArrayBought == true) { 
+            //returnam banii
+            // BoughtProducts storage b = BoughtProducts[indexBought];
+            // Product storage p = Product[indexProduct];
+            
+            BoughtProducts[indexBought].buyer_hash.transfer(OProducts[indexProduct].price);
+            
+            //stergem produsul din produsele vandute
+            for (uint j = indexBought; j < BoughtProducts.length - 1; j++) {
+                BoughtProducts[j] = BoughtProducts[j + 1];
+            }
+            
+            delete BoughtProducts[BoughtProducts.length - 1];
+            return true;
+        }
+        
+        
+        
+        return false;
     }
     
     function RemoveProduct(string memory _unique_hash) public OwnerReq returns (bool) //Madalina
@@ -150,7 +195,7 @@ contract Products
             if(new_price != OProducts[i].price && new_price > 0)
                 OProducts[i].price = new_price;  
             if(!CompareStrings(new_buyerHash, ""))
-                OProducts[i].buyer_hash = new_buyerHash;  
+                // OProducts[i].buyer_hash = new_buyerHash;  
             return true;
             }
         }
