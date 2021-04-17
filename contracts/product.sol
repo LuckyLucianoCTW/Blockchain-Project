@@ -21,9 +21,19 @@ contract Products
         string country;
         string unique_hash;
         uint price;
-        string buyer_hash;
+        uint pieces;
+      
     } 
-    Product [] Logs;
+    
+    struct BoughtProduct
+    {
+        string unique_hash;
+        string buyer_hash;
+        string numberOrder;
+    }
+    
+    BoughtProduct [] BoughtProducts;
+    
     Product [] OProducts; 
     string [] ReportedHashProducts;
     
