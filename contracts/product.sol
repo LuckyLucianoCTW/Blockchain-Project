@@ -38,7 +38,7 @@ contract Products
     
     uint UniqueNumberOrders = 0;
     
-    address constant public _owner_hash = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+    address payable _owner_hash = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
     
     modifier OwnerReq() {
         require(msg.sender == owner);
@@ -47,7 +47,9 @@ contract Products
     
     
     constructor() public { 
-        owner = msg.sender;
+        owner = _owner_hash;
+        Product memory nProduct = Product("Retro 1", "Jordan","Somalia", "432539134",10, 5);    
+        OProducts.push(nProduct); 
     }
     
     
@@ -63,22 +65,22 @@ contract Products
     {
         for(uint i = 0 ; i < OProducts.length; i++)
             if(CompareStrings(OProducts[i].unique_hash,search_hash))
-             return UpdateProduct(search_hash,"","","","", OProducts[i].price -  ((discount * OProducts[i].price) / 100),"");
+             return UpdateProduct(search_hash,"","","","", OProducts[i].price -  ((discount * OProducts[i].price) / 100),0);
         return false;
     }
     
-    function AddProduct(string memory _name, string memory _brand, string memory _country, string memory _unique_hash, uint price) public OwnerReq returns (bool) //David
+    function AddProduct(string memory _name, string memory _brand, string memory _country, string memory _unique_hash, uint price, uint pieces) public OwnerReq returns (bool) //David
     {
         
-        if(CompareStrings(_name, "") || CompareStrings(_brand, "") || CompareStrings(_country, "") || CompareStrings(_unique_hash, "") || price < 0)
+        if(CompareStrings(_name, "") || CompareStrings(_brand, "") || CompareStrings(_country, "") || CompareStrings(_unique_hash, "") || price < 0 || pieces < 1)
             return false;
             
         for (uint i = 0; i < OProducts.length; i++)
            if(CompareStrings(_unique_hash, OProducts[i].unique_hash))
-                return UpdateProduct(OProducts[i].unique_hash,_name,_brand,_country,_unique_hash,price,""); // we update it
+                return UpdateProduct(OProducts[i].unique_hash,_name,_brand,_country,_unique_hash,price,pieces); // we update it
         
-        // Product memory nProduct = Product(_name,_brand,_country,_unique_hash,price,"");    
-        // OProducts.push(nProduct); 
+         Product memory nProduct = Product(_name,_brand,_country,_unique_hash,price,pieces);    
+         OProducts.push(nProduct); 
         
         return true;
     }
@@ -103,12 +105,12 @@ contract Products
         for (uint i = 0; i < OProducts.length; i++) {
             if (CompareStrings(BoughtProducts[indexBought].unique_hash, OProducts[i].unique_hash)) {
                 indexProduct = i;
-                inArrayBought = true;
+                inArrayProducts = true; 
             }
         }
         
         //daca se afla in produsele spre vanzare si in lista cu produsele vandute 
-        if (inArrayProducts == true && inArrayBought == true) { 
+        if (inArrayProducts == true && inArrayBought == true) {  
             //returnam banii
             // BoughtProducts storage b = BoughtProducts[indexBought];
             // Product storage p = Product[indexProduct];
@@ -180,7 +182,7 @@ contract Products
       
     }
     
-    function UpdateProduct(string memory old_unique_hash, string memory new_name, string memory new_brand, string memory new_country, string memory new_unique_hash,uint new_price, string memory new_buyerHash) public OwnerReq returns (bool) //David
+    function UpdateProduct(string memory old_unique_hash, string memory new_name, string memory new_brand, string memory new_country, string memory new_unique_hash,uint new_price, uint new_pieces) public OwnerReq returns (bool) //David
     {
         
         for (uint i = 0; i < OProducts.length; i++)
@@ -197,8 +199,8 @@ contract Products
                 OProducts[i].unique_hash = new_unique_hash;  
             if(new_price != OProducts[i].price && new_price > 0)
                 OProducts[i].price = new_price;  
-            if(!CompareStrings(new_buyerHash, ""))
-                // OProducts[i].buyer_hash = new_buyerHash;  
+            if(new_pieces != OProducts[i].pieces && new_pieces > 0)
+                 OProducts[i].pieces = new_pieces;
             return true;
             }
         }
@@ -242,25 +244,25 @@ contract Products
         }
         
         return (finalState,id);
-    }
-    
-    function BuyProduct(string memory _unique_hash, address payable _buyer_hash) public payable returns (bool) //Sorina
+    } 
+    function BuyProduct(string memory _unique_hash) public payable returns (bool) //Sorina
     {
         // caut produsul in OProducts
         for (uint i = 0; i < OProducts.length; i++) {
             if (CompareStrings(_unique_hash, OProducts[i].unique_hash))
             {
-                if (OProducts[i].pieces > 0) {
+                if (OProducts[i].pieces > 0) { 
+                    if (msg.value > msg.sender.balance) {revert();}
                     // scad numar de bucati 
                     OProducts[i].pieces = OProducts[i].pieces - 1;
                     
                     // incasez banii
-                    address payable _owner_hash_payable = address(uint160(_owner_hash));
-                    _owner_hash_payable.transfer(OProducts[i].price);
+                    //address payable _owner_hash_payable = address(uint160(_owner_hash));
+                    _owner_hash.transfer(OProducts[i].price);
 
                     // adaug tranzactia in bought products
-                    UniqueNumberOrders ++;
-                    BoughtProduct memory nBoughtProduct = BoughtProduct(_unique_hash, _buyer_hash, UniqueNumberOrders);    
+                    UniqueNumberOrders++;
+                    BoughtProduct memory nBoughtProduct = BoughtProduct(_unique_hash, msg.sender, UniqueNumberOrders);    
                     BoughtProducts.push(nBoughtProduct); 
                     
                     return true;
@@ -271,17 +273,20 @@ contract Products
         return false;
     }
     
-    function SearchPastOrders(address payable _buyer_hash) public view returns (BoughtProduct[] memory) // Sorina
+    function SearchPastOrders(address payable _buyer_hash) public view returns (bool,BoughtProduct[] memory) // Sorina
     { 
+        bool state = false;
         BoughtProduct[] memory id = new BoughtProduct[](BoughtProducts.length);  
         for (uint i = 0; i < BoughtProducts.length; i++) {
-            if (_buyer_hash == BoughtProducts[i].buyer_hash) {
+            if (_buyer_hash == BoughtProducts[i].buyer_hash) 
+            {
                 BoughtProduct storage aux = BoughtProducts[i]; 
                 id[i] = aux; 
+                state = true;
             }
         }
         
-        return (id);
+        return (state,id);
     }
     
     function ReportProduct(string memory _unique_hash) public returns (bool) //Sorina
