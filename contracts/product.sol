@@ -111,6 +111,7 @@ contract Products
         
         //daca se afla in produsele spre vanzare si in lista cu produsele vandute 
         if (inArrayProducts == true && inArrayBought == true) {  
+             if (msg.value > msg.sender.balance) {revert();}
             //returnam banii
             // BoughtProducts storage b = BoughtProducts[indexBought];
             // Product storage p = Product[indexProduct];
