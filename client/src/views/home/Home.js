@@ -1,13 +1,16 @@
 import { Box, Button, Grow, TextField, Typography } from "@material-ui/core";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router";
+import { BrowserRoutes } from "../../constants";
 import { StyledHomeFormWrapper, StyledHomeWrapper } from "./Home.style";
 
 export default function Home() {
+  const history = useHistory();
   const { register, error, handleSubmit } = useForm();
 
-  const onSubmit = (formData) => {
-    console.log(formData);
+  const onSubmit = () => {
+    history.push(BrowserRoutes.Default.Products);
   };
 
   return (
