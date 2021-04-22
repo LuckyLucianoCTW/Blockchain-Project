@@ -2,14 +2,18 @@ import { Box, Button, Grow, TextField, Typography } from "@material-ui/core";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
+import { useLogin } from "../../api";
 import { BrowserRoutes } from "../../constants";
 import { StyledHomeFormWrapper, StyledHomeWrapper } from "./Home.style";
 
 export default function Home() {
   const history = useHistory();
-  const { register, error, handleSubmit } = useForm();
+  const { register,  handleSubmit, formState: {errors} } = useForm();
 
-  const onSubmit = () => {
+  const [login] = useLogin();
+
+  const onSubmit = (formData) => {
+    login(formData.accountKey);
     history.push(BrowserRoutes.Default.Products);
   };
 
@@ -28,8 +32,8 @@ export default function Home() {
                   message: "Account key is required!",
                 },
               })}
-              error={!!error?.accountKey?.message}
-              helperText={error?.accountKey?.message || ""}
+              error={!!errors?.accountKey?.message}
+              helperText={errors?.accountKey?.message || ""}
               variant="outlined"
               label="Enter account key"
               fullWidth

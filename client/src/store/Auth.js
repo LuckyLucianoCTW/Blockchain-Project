@@ -1,17 +1,22 @@
 import create from "zustand";
+import { setLocalStorage, getLocalStorage } from "../utils";
 
-const defaultProfile = {
+const defaultProfile = getLocalStorage("User.Auth") || {
   accountKey: "",
-  role: "",
+  isAdmin: false,
   isAuth: false,
 };
 
 const useAuth = create((set) => ({
-  accountKey: "",
-  role: "",
-  isAuth: false,
-  setProfile: (profile) => set({ ...profile, isAuth: true }),
-  resetProfile: () => set({ ...defaultProfile }),
+  ...defaultProfile,
+  setProfile: (profile) => {
+    setLocalStorage("User.Auth", { ...profile, isAuth: true });
+    return set({ ...profile, isAuth: true });
+  },
+  resetProfile: () => {
+    localStorage.clear();
+    return set({ ...defaultProfile });
+  },
 }));
 
 export default useAuth;

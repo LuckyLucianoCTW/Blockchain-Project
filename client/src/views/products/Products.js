@@ -6,7 +6,7 @@ import { StyledProductsWrapper } from "./Products.style";
 
 export default function Products() {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState(0);
+  const [filter, setFilter] = useState("ALL");
 
   const handleChange = (event, newValue) => {
     setFilter(newValue);

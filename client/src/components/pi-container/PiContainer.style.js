@@ -6,3 +6,24 @@ export const StyledContainer = styled(Container)`
   min-height: 100vh;
   padding-top: 20px;
 `;
+
+export const StyledAddProductButton = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 60px;
+  height: 60px;
+  background-color: steelblue;
+  border-radius: 50%;
+  &::before {
+    content: "+";
+    font-size: 50px;
+    font-weight: 400;
+    color: white;
+  }
+`;
