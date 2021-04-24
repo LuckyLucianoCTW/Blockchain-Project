@@ -1,9 +1,11 @@
 import { Box, Button, InputAdornment, TextField } from "@material-ui/core";
 import React from "react";
 import { useForm } from "react-hook-form";
+import usePostProducts from "../../api/products/usePostProducts";
 
 export default function PiAddProductForm({ handleClose }) {
   //name brand country unique_hash price pieces
+  const addProduct = usePostProducts();
 
   const {
     register,
@@ -12,6 +14,13 @@ export default function PiAddProductForm({ handleClose }) {
   } = useForm();
 
   const onSubmit = (formData) => {
+    addProduct({
+      name: formData.name,
+      brand: formData.brand,
+      country: formData.country,
+      price: formData.price,
+      pieces: formData.pieces,
+    });
     console.log(`Added product`, formData);
   };
 

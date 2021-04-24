@@ -1,28 +1,28 @@
-import { useEffect, useState } from "react";
-import { useContract } from "../../store";
+import { useAuth, useContract } from "../../store";
+import { v4 as uuidv4 } from "uuid";
 
-export default function useProducts(params) {
-  const { name = "", brand = "", country = "", hash = "" } = params;
-  const [products, setProducts] = useState([]);
+export default function usePostProducts() {
+  const { accountKey } = useAuth();
   const { contract } = useContract();
 
-  useEffect(() => {
+  const addProduct = ({ name, brand, country, price, pieces }) => {
+    console.log(parseInt(price));
     contract?.methods
-      .SearchProduct(name, brand, country, hash)
-      .call()
-      .then((data) => {
-        setProducts(
-          data[1]?.map((product) => ({
-            code: product[3],
-            name: product[0],
-            brand: product[1],
-            country: product[2],
-            pieces: product[4],
-            price: product[5],
-          }))
-        );
+      .AddProduct(
+        name,
+        brand,
+        country,
+        uuidv4(),
+        parseInt(price),
+        parseInt(pieces)
+      )
+      .send({
+        from: accountKey,
+      })
+      .then(() => {
+        console.log("succesfully added");
       });
-  }, [name, brand, country, hash, contract]);
+  };
 
-  return products;
+  return addProduct;
 }

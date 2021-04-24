@@ -1,15 +1,19 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import React from "react";
+import { useBuyProducts } from "../../api";
 import { StyledBuyModalImage } from "./PiProductItem.style";
 
 export default function PiProductItemBuy({
   imageUrl,
   name,
+  code,
   price,
   handleClose,
 }) {
-  const sendEth = (amount) => {
-    console.log(`You've sent ${amount} ETH.`);
+  const buyProduct = useBuyProducts();
+  const sendEth = (amount, code) => {
+    buyProduct({ hash: code, amount });
+    console.log(`You've sent ${amount} ETH for ${code}.`);
   };
 
   return (
@@ -33,7 +37,7 @@ export default function PiProductItemBuy({
           size="small"
           color="primary"
           variant="contained"
-          onClick={() => sendEth(price)}
+          onClick={() => sendEth(price, code)}
         >
           Send {price} ETH
         </Button>

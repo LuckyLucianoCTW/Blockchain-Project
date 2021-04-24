@@ -1,5 +1,4 @@
 import create from "zustand";
-import { setLocalStorage, getLocalStorage } from "../utils";
 
 const emptyProfile = {
   accountKey: "",
@@ -7,14 +6,15 @@ const emptyProfile = {
   isAuth: false,
 };
 
-const defaultProfile = getLocalStorage("User.AccountKey") || emptyProfile;
+const ownerAddress = "0x6392570c47c6893ace024Bb68A4ca13cC0189859";
 
 const useAuth = create((set) => ({
-  ...defaultProfile,
   setProfile: (accountKey) => {
-    console.log("AccountKey", accountKey);
-    setLocalStorage("User.AccountKey", accountKey);
-    const newUser = { accountKey, isAdmin: false, isAuth: true };
+    const newUser = {
+      accountKey,
+      isAdmin: accountKey === ownerAddress,
+      isAuth: true,
+    };
     return set(newUser);
   },
   resetProfile: () => {

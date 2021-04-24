@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import React from "react";
+import { useReportProducts } from "../../api";
 import { StyledBuyModalImage } from "./PiProductItem.style";
 
 export default function PiProducItemReport({
@@ -8,7 +9,10 @@ export default function PiProducItemReport({
   name,
   handleClose,
 }) {
+  const reportProduct = useReportProducts();
+
   const report = (code) => {
+    reportProduct({ hash: code });
     console.log(`You've reported ${code} as fake.`);
   };
 

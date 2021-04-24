@@ -12,7 +12,6 @@ export default function index() {
   const [routes, setRoutes] = useState(Default);
 
   useEffect(() => {
-    console.log(isAuth);
     if (!isAuth) {
       setRoutes(Default);
       history.push(BrowserRoutes.Default.Home);
