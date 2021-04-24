@@ -1,11 +1,13 @@
 import create from "zustand";
 import { setLocalStorage, getLocalStorage } from "../utils";
 
-const defaultProfile = getLocalStorage("User.Auth") || {
+const emptyProfile = {
   accountKey: "",
   isAdmin: false,
   isAuth: false,
 };
+
+const defaultProfile = getLocalStorage("User.Auth") || emptyProfile;
 
 const useAuth = create((set) => ({
   ...defaultProfile,
@@ -15,7 +17,7 @@ const useAuth = create((set) => ({
   },
   resetProfile: () => {
     localStorage.clear();
-    return set({ ...defaultProfile });
+    return set({ ...emptyProfile });
   },
 }));
 

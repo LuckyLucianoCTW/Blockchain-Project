@@ -18,8 +18,10 @@ export default function index() {
       history.push(BrowserRoutes.Default.Home);
     } else if (isAdmin) {
       setRoutes(Owner);
+      history.push(BrowserRoutes.Owner.Products);
     } else {
       setRoutes(Default);
+      history.push(BrowserRoutes.Default.Products);
     }
   }, [isAdmin]);
 

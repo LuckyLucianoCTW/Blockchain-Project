@@ -1,4 +1,4 @@
-import { Box, Grid, Tab, Tabs, TextField } from "@material-ui/core";
+import { Box, Grid, Tab, Tabs, TextField, Typography } from "@material-ui/core";
 import React, { useState } from "react";
 import { useProducts } from "../../api";
 import { PiProductItem } from "../../components";
@@ -10,7 +10,6 @@ export default function Products() {
 
   const handleChange = (event, newValue) => {
     setFilter(newValue);
-    console.log(newValue);
   };
 
   const products = useProducts();
@@ -38,6 +37,30 @@ export default function Products() {
         <Tab value="REPORTED" label="Reported" />
         <Tab value="ORDERED" label="Ordered" />
       </Tabs>
+      <Box
+        py={3}
+        display="flex"
+        justifyContent="space-between"
+        fontWeight="700"
+      >
+        <Typography
+          variant="h5"
+          color="primary"
+          style={{
+            fontWeight: 700,
+          }}
+        >
+          {filter}
+        </Typography>
+        <Typography
+          variant="h6"
+          style={{
+            fontWeight: 400,
+          }}
+        >
+          ({products.length} products)
+        </Typography>
+      </Box>
       <Grid container spacing={3}>
         {products.map((product, index) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={index}>

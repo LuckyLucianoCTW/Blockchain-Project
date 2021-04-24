@@ -60,7 +60,7 @@ export default function PiProductItem({
               <Typography variant="body2">Buy for {price} ETH</Typography>
             </Button>
             <Button
-              size="small"
+              size="small"ch
               color="secondary"
               onClick={() => setReportModal(true)}
             >
