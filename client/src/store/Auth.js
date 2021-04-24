@@ -7,13 +7,15 @@ const emptyProfile = {
   isAuth: false,
 };
 
-const defaultProfile = getLocalStorage("User.Auth") || emptyProfile;
+const defaultProfile = getLocalStorage("User.AccountKey") || emptyProfile;
 
 const useAuth = create((set) => ({
   ...defaultProfile,
-  setProfile: (profile) => {
-    setLocalStorage("User.Auth", { ...profile, isAuth: true });
-    return set({ ...profile, isAuth: true });
+  setProfile: (accountKey) => {
+    console.log("AccountKey", accountKey);
+    setLocalStorage("User.AccountKey", accountKey);
+    const newUser = { accountKey, isAdmin: false, isAuth: true };
+    return set(newUser);
   },
   resetProfile: () => {
     localStorage.clear();

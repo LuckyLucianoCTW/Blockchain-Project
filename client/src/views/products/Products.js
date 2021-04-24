@@ -12,7 +12,7 @@ export default function Products() {
     setFilter(newValue);
   };
 
-  const products = useProducts();
+  const products = useProducts({ name: "" });
 
   return (
     <StyledProductsWrapper>
