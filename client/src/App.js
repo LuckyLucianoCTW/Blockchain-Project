@@ -5,6 +5,13 @@ import { PiContainer } from "./components";
 import Routes from "./routes";
 import { useAuth, useContract } from "./store";
 import Products from "./abis/Products.json";
+import {
+  QueryClient,
+  QueryClientProvider,
+  // ReactQueryDevtools,
+} from "react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   const { setProfile } = useAuth();
@@ -32,7 +39,7 @@ function App() {
 
     const netId = await web3.eth.net.getId();
     const networkData = Products.networks[netId];
-    
+
     if (networkData) {
       const products = new web3.eth.Contract(Products.abi, networkData.address);
       setContract(products);
@@ -47,11 +54,14 @@ function App() {
   }, []);
 
   return (
-    <PiContainer>
-      <Router>
-        <Routes />
-      </Router>
-    </PiContainer>
+    <QueryClientProvider client={queryClient}>
+      <PiContainer>
+        <Router>
+          <Routes />
+        </Router>
+      </PiContainer>
+      {/* <ReactQueryDevtools initialIsOpen /> */}
+    </QueryClientProvider>
   );
 }
 

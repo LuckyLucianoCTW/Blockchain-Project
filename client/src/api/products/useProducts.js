@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useContract } from "../../store";
 
 export default function useProducts(params) {
-  const { name = "", brand = "", country = "", hash = "" } = params;
   const [products, setProducts] = useState([]);
   const { contract } = useContract();
 
@@ -10,10 +9,14 @@ export default function useProducts(params) {
 
   useEffect(() => {
     contract?.methods
-      .SearchProduct(name, brand, country, hash)
+      .SearchProduct(
+        params?.name || "",
+        params?.brand || "",
+        params?.country || "",
+        params?.hash || ""
+      )
       .call()
       .then((data) => {
-        console.log(data);
         setProducts(
           data[1]?.map((product) => ({
             code: product[3],
@@ -25,7 +28,7 @@ export default function useProducts(params) {
           }))
         );
       });
-  }, [name, brand, country, hash, contract]);
+  }, [params, contract]);
 
   return products;
 }

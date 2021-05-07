@@ -6,7 +6,7 @@ const emptyProfile = {
   isAuth: false,
 };
 
-const ownerAddress = "0x6392570c47c6893ace024Bb68A4ca13cC0189859";
+const ownerAddress = "0x4A0cc881d57b786E7F0B4AA0ac6E057f415648E6";
 
 const useAuth = create((set) => ({
   setProfile: (accountKey) => {

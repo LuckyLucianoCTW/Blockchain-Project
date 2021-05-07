@@ -27,3 +27,16 @@ export const StyledAddProductButton = styled.div`
     color: white;
   }
 `;
+export const StyledReportProductButton = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 60px;
+  background-color: yellow;
+  border-radius: 50%;
+`;

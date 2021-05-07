@@ -2,10 +2,12 @@ import { Box, Button, InputAdornment, TextField } from "@material-ui/core";
 import React from "react";
 import { useForm } from "react-hook-form";
 import usePostProducts from "../../api/products/usePostProducts";
+import useUpdateProducts from "../../api/products/useUpdateProducts";
 
-export default function PiAddProductForm({ handleClose }) {
+export default function PiAddProductForm({ handleClose, product, edit }) {
   //name brand country unique_hash price pieces
   const addProduct = usePostProducts();
+  const updateProduct = useUpdateProducts();
 
   const {
     register,
@@ -14,14 +16,30 @@ export default function PiAddProductForm({ handleClose }) {
   } = useForm();
 
   const onSubmit = (formData) => {
-    addProduct({
-      name: formData.name,
-      brand: formData.brand,
-      country: formData.country,
-      price: formData.price,
-      pieces: formData.pieces,
-    });
-    console.log(`Added product`, formData);
+    if (!edit) {
+      addProduct({
+        name: formData.name,
+        brand: formData.brand,
+        country: formData.country,
+        hash: formData.hash,
+        price: formData.price,
+        pieces: formData.pieces,
+      });
+      console.log(`Added product`, formData);
+    } else {
+      console.log(product);
+      console.log(formData);
+      updateProduct({
+        old_hash: product.code || "",
+        name: formData.name || "",
+        brand: formData.brand || "",
+        country: formData.country || "",
+        new_hash: formData.hash || "",
+        price: formData.price || 0,
+        pieces: formData.pieces || 0,
+      });
+      console.log(`Updated product`, formData);
+    }
   };
 
   return (
@@ -34,10 +52,11 @@ export default function PiAddProductForm({ handleClose }) {
       <TextField
         {...register("name", {
           required: {
-            value: true,
+            value: !edit,
             message: "Product name is required!",
           },
         })}
+        defaultValue={product?.name ?? ""}
         error={!!errors?.name?.message}
         helperText={errors?.name?.message || ""}
         variant="outlined"
@@ -45,12 +64,27 @@ export default function PiAddProductForm({ handleClose }) {
         fullWidth
       />
       <TextField
+        {...register("hash", {
+          required: {
+            value: !edit,
+            message: "Barcode is required!",
+          },
+        })}
+        defaultValue={product?.code ?? ""}
+        error={!!errors?.hash?.message}
+        helperText={errors?.hash?.message || ""}
+        variant="outlined"
+        label="Enter barcode"
+        fullWidth
+      />
+      <TextField
         {...register("brand", {
           required: {
-            value: true,
+            value: !edit,
             message: "Product brand is required!",
           },
         })}
+        defaultValue={product?.brand ?? ""}
         error={!!errors?.brand?.message}
         helperText={errors?.brand?.message || ""}
         variant="outlined"
@@ -60,10 +94,11 @@ export default function PiAddProductForm({ handleClose }) {
       <TextField
         {...register("country", {
           required: {
-            value: true,
+            value: !edit,
             message: "Country is required!",
           },
         })}
+        defaultValue={product?.country ?? ""}
         error={!!errors?.country?.message}
         helperText={errors?.country?.message || ""}
         variant="outlined"
@@ -73,14 +108,15 @@ export default function PiAddProductForm({ handleClose }) {
       <TextField
         {...register("price", {
           required: {
-            value: true,
+            value: !edit,
             message: "Product price is required!",
           },
           min: {
-            value: 1,
-            message: "Must be at least 1 ETH.",
+            value: 0,
+            message: "Must be higher than 0 ETH.",
           },
         })}
+        defaultValue={product?.price ?? 0.1}
         InputProps={{
           startAdornment: <InputAdornment position="start">ETH</InputAdornment>,
         }}
@@ -94,7 +130,7 @@ export default function PiAddProductForm({ handleClose }) {
       <TextField
         {...register("pieces", {
           required: {
-            value: true,
+            value: !edit,
             message: "Product pieces is required!",
           },
           min: {
@@ -102,6 +138,7 @@ export default function PiAddProductForm({ handleClose }) {
             message: "Must be at least 1 piece.",
           },
         })}
+        defaultValue={product?.pieces ?? 0}
         error={!!errors?.pieces?.message}
         helperText={errors?.pieces?.message || ""}
         variant="outlined"
@@ -123,7 +160,7 @@ export default function PiAddProductForm({ handleClose }) {
           variant="contained"
           onClick={handleSubmit(onSubmit)}
         >
-          Add product
+          {edit ? "Update product" : "Add product"}
         </Button>
       </Box>
     </Box>

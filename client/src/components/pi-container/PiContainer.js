@@ -4,10 +4,11 @@ import { useAuth } from "../../store";
 import PiAddProductForm from "../pi-add-product-form/PiAddProductForm";
 import PiModal from "../pi-modal/PiModal";
 import { StyledAddProductButton, StyledContainer } from "./PiContainer.style";
+import PiContainerActions from "./PiContainerActions";
+// import {ReportIcon} from "@material-ui/icons";
 
 export default function PiContainer({ children }) {
   const { isAdmin, accountKey } = useAuth();
-  const [addProductModal, setAddProductModal] = useState();
 
   return (
     <>
@@ -21,17 +22,15 @@ export default function PiContainer({ children }) {
           <Typography>Your account: {accountKey}</Typography>
         </Box>
         {children}
-        {isAdmin && (
+        <PiContainerActions />
+        {/* {isAdmin && (
           <StyledAddProductButton onClick={() => setAddProductModal(true)} />
-        )}
+        )} */}
+        {/* <StyledReportProductButton onClick={() => setReportProductModal(true)}> */}
+        {/* <ReportIcon /> */}
+        {/* <Typography>Report product</Typography>
+        </StyledReportProductButton> */}
       </StyledContainer>
-
-      <PiModal
-        isOpen={addProductModal}
-        handleClose={() => setAddProductModal(false)}
-      >
-        <PiAddProductForm />
-      </PiModal>
     </>
   );
 }
